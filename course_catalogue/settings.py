@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # Django Filters
     'django_filters',
+    # Our applications
+    'courses',
 ]
 
 MIDDLEWARE = [
