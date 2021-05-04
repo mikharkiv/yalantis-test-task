@@ -1,6 +1,8 @@
+import datetime
 import json
 
 from django import views
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.views import View
@@ -9,12 +11,23 @@ from django.views.generic.edit import BaseCreateView, ModelFormMixin
 from course_catalogue.settings import PURE_REST
 
 
+class DateDjangoJSONEncoder(DjangoJSONEncoder):
+	"""
+	Default Django JSON Encoder with custom date format support
+	"""
+	def default(self, o):
+		if isinstance(o, datetime.date):
+			return format(o, PURE_REST['DATE_FORMAT'])
+		else:
+			return super().default(o)
+
+
 class JsonResponseMixin:
 	"""
 	A mixin for returning JSON
 	"""
 	def render_to_json(self, context, **response_kwargs):
-		return JsonResponse(self.get_paginated_data(context), **response_kwargs, safe=False)
+		return JsonResponse(self.get_paginated_data(context), **response_kwargs, safe=False, encoder=DateDjangoJSONEncoder)
 
 	def get_data(self, context):
 		return context
@@ -74,7 +87,7 @@ class JsonFormMixin(ModelFormMixin):
 	def form_valid(self, form):
 		self.object = form.save()
 		# Primitive and naive encoding (w/o writing own Serializer)
-		return JsonResponse(self.object, safe=False)
+		return JsonResponse(model_to_dict(self.object), safe=False, encoder=DateDjangoJSONEncoder)
 
 
 class JsonFormProcessor(JsonFormMixin, View):
@@ -84,7 +97,7 @@ class JsonFormProcessor(JsonFormMixin, View):
 	"""
 	def get(self, request, *args, **kwargs):
 		# Restrict for using GET method inherited from superclass
-		return JsonResponse({'detail': 'Method not allowed'}, status=405)
+		return JsonResponse({'detail': 'Method not allowed'}, status=405, encoder=DateDjangoJSONEncoder)
 
 	def post(self, request, *args, **kwargs):
 		form = self.get_form()
@@ -92,7 +105,7 @@ class JsonFormProcessor(JsonFormMixin, View):
 			return self.form_valid(form)
 		else:
 			# If we have some problems, return form errors
-			return JsonResponse(form.errors, status=400)
+			return JsonResponse(form.errors, status=400, encoder=DateDjangoJSONEncoder)
 
 
 class JsonCreateView(JsonFormProcessor, BaseCreateView):
@@ -120,7 +133,7 @@ class JsonDeleteView(JsonFormProcessor):
 	def delete(self, request, *args, **kwargs):
 		self.object = self.get_object()
 		self.object.delete()
-		return JsonResponse({'detail': 'Object deleted'})
+		return JsonResponse({'detail': 'Object deleted'}, encoder=DateDjangoJSONEncoder)
 
 
 class JsonModelView(JsonDetailView, JsonUpdateView, JsonDeleteView):

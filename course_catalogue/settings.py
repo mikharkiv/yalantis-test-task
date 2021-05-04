@@ -98,8 +98,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
+USE_I18N = False  # Changed for custom date format parsing
+USE_L10N = False
 USE_TZ = True
 
 
@@ -129,3 +129,5 @@ PURE_REST = {
     'PAGE_SIZE': 10,
     'DATE_FORMAT': "%d.%m.%Y",
 }
+
+DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d.%m.%Y']

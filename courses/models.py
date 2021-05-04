@@ -16,5 +16,9 @@ class Course(models.Model):
 	def clean(self):
 		# Dates validation
 		from django.core.exceptions import ValidationError
-		if self.start_date > self.end_date:
-			raise ValidationError('Start date should precede end date')
+		try:
+			if self.start_date > self.end_date:
+				raise ValidationError('Start date should precede end date')
+		except TypeError:
+			raise ValidationError('Date must be an instance of datetime.date')
+
