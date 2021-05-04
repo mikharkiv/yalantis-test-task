@@ -6,7 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.views import View
-from django.views.generic.edit import BaseCreateView, ModelFormMixin
+from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
 
 from course_catalogue.settings import PURE_REST
 
@@ -24,9 +24,9 @@ class DateDjangoJSONEncoder(DjangoJSONEncoder):
 
 class JsonResponseMixin:
 	"""
-	A mixin for returning JSON
+	Mixin for returning JSON response (with pagination, if possible)
 	"""
-	def render_to_json(self, context, **response_kwargs):
+	def render_to_response(self, context, **response_kwargs):
 		return JsonResponse(self.get_paginated_data(context), **response_kwargs, safe=False, encoder=DateDjangoJSONEncoder)
 
 	def get_data(self, context):
@@ -49,9 +49,6 @@ class JsonListView(JsonResponseMixin, views.generic.list.BaseListView):
 	"""
 	paginate_by = PURE_REST['PAGE_SIZE']  # Default pages count
 
-	def render_to_response(self, context, **response_kwargs):
-		return self.render_to_json(context, **response_kwargs)
-
 	def get_data(self, context):
 		return list(context['object_list'].values().iterator())
 
@@ -60,9 +57,6 @@ class JsonDetailView(JsonResponseMixin, views.generic.detail.BaseDetailView):
 	"""
 	Default Django Detail View with JSON response
 	"""
-	def render_to_response(self, context, **response_kwargs):
-		return self.render_to_json(context, **response_kwargs)
-
 	def get_data(self, context):
 		return model_to_dict(context['object'])
 
@@ -76,17 +70,17 @@ class JsonFormMixin(ModelFormMixin):
 		kwargs = self.get_form_kwargs()
 		if form_class is None:
 			form_class = self.get_form_class()
-		# Primitive and naive decoding (w/o writing own Serializer)
+		# Primitive and naive deserialization (w/o writing own Serializer)
 		try:
 			kwargs['data'] = json.loads(self.request.body)
 			return form_class(**kwargs)
 		except json.JSONDecodeError:
-			# If an error occurred, assume that it's bad JSON
+			# If an error occurred, assume that reason is the bad JSON
 			return form_class()
 
 	def form_valid(self, form):
 		self.object = form.save()
-		# Primitive and naive encoding (w/o writing own Serializer)
+		# Primitive and naive serialization (w/o writing own Serializer)
 		return JsonResponse(model_to_dict(self.object), safe=False, encoder=DateDjangoJSONEncoder)
 
 
@@ -108,26 +102,23 @@ class JsonFormProcessor(JsonFormMixin, View):
 			return JsonResponse(form.errors, status=400, encoder=DateDjangoJSONEncoder)
 
 
-class JsonCreateView(JsonFormProcessor, BaseCreateView):
+class JsonCreateView(BaseCreateView, JsonFormProcessor):
 	"""
 	Default Django Create View that accepts JSON-encoded data with
 	restricted GET method
 	"""
 
 
-class JsonUpdateView(JsonFormProcessor):
+class JsonUpdateView(BaseUpdateView, JsonFormProcessor):
 	"""
 	Default Django Update View that accepts JSON-encoded data with
 	restricted GET method
 	"""
-	def post(self, request, *args, **kwargs):
-		self.object = self.get_object()
-		return super().post(request, *args, **kwargs)
 
 
 class JsonDeleteView(JsonFormProcessor):
 	"""
-	Default Django Delete View with	restricted GET method and returns
+	A Delete View with restricted GET method, returns
 	JSON-encoded response
 	"""
 	def delete(self, request, *args, **kwargs):
