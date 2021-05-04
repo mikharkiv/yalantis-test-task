@@ -10,6 +10,9 @@ class Course(models.Model):
 	end_date = models.DateField(verbose_name='date of end')
 	lectures_num = models.PositiveIntegerField(verbose_name='number of lectures')
 
+	class Meta:
+		ordering = ['id']
+
 	def __str__(self):
 		return self.name
 

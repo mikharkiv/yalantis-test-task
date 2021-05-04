@@ -131,3 +131,5 @@ PURE_REST = {
 }
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d.%m.%Y']
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
