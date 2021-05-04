@@ -5,7 +5,6 @@ class Course(models.Model):
 	"""
 	The model of the course.
 	"""
-
 	name = models.CharField(max_length=50, verbose_name='name')
 	start_date = models.DateField(verbose_name='date of start')
 	end_date = models.DateField(verbose_name='date of end')
@@ -13,3 +12,9 @@ class Course(models.Model):
 
 	def __str__(self):
 		return self.name
+
+	def clean(self):
+		# Dates validation
+		from django.core.exceptions import ValidationError
+		if self.start_date > self.end_date:
+			raise ValidationError('Start date should precede end date')
