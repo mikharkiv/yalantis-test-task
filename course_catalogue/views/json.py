@@ -9,6 +9,7 @@ from django.views import View
 from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
 
 from course_catalogue.settings import PURE_REST
+from course_catalogue.views.filters import SearchFilter, FieldsFilter
 
 
 class DateDjangoJSONEncoder(DjangoJSONEncoder):
@@ -138,8 +139,9 @@ class JsonModelView(JsonDetailView, JsonUpdateView, JsonDeleteView):
 	"""
 
 
-class JsonListCreateView(JsonListView, JsonCreateView):
+class JsonListCreateView(FieldsFilter, SearchFilter, JsonListView, JsonCreateView):
 	"""
+	Uses FieldsFilter and SearchFilter.
 	Provides multiple list views for model:
 		GET - List JSON view.
 
