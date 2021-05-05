@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,8 +14,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -29,13 +29,18 @@ INSTALLED_APPS = [
     'rest_framework',
     # Django Filters
     'django_filters',
+    # Django Rest Framework Swagger Docs Generator
+    'drf_yasg',
+    # Our applications
+    'courses',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # CSRF Middleware disabled for using Forms Views in Pure REST implementation
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -95,11 +100,39 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
+USE_I18N = False  # Changed for custom date format parsing
+USE_L10N = False
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+# Rest Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',
+                                'rest_framework.filters.SearchFilter',
+                                'rest_framework.filters.OrderingFilter'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DATETIME_FORMAT': "%d.%m.%Y %H:%M",
+    'DATE_FORMAT': "%d.%m.%Y",
+    'DATE_INPUT_FORMATS': ['%Y-%m-%d', '%d.%m.%Y'],
+}
+
+APPEND_SLASH = True
+
+# Pure REST Views Configuration
+
+PURE_REST = {
+    'PAGE_SIZE': 10,
+    'DATE_FORMAT': "%d.%m.%Y",
+}
+
+DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d.%m.%Y']
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
