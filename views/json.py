@@ -2,11 +2,13 @@ import datetime
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import JsonResponse
 from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from django.views import View
 from django.views.generic.detail import BaseDetailView
-from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
+from django.views.generic.edit import (BaseCreateView,
+										ModelFormMixin,
+										BaseUpdateView)
 from django.views.generic.list import BaseListView
 
 from course_catalogue.settings import PURE_REST
