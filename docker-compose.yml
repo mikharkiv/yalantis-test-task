@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  test:
+    build: .
+    image: mikharkiv-course-catalogue
+    command: python -m pytest
+    restart: "no"
+  app:
+    build: .
+    image: mikharkiv-course-catalogue
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/courses-app
+    ports:
+      - "8000:8000"
