@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # Django Filters
     'django_filters',
+    # Django Rest Framework Swagger Docs Generator
+    'drf_yasg',
     # Our applications
     'courses',
 ]
