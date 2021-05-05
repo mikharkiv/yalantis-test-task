@@ -56,6 +56,9 @@ On Windows:
 `python manage.py runserver`
 7. Open [URL](http://localhost:8000/) in your browser and enjoy!
 
+You can also load fixtures (`fixtures.json`) to fill database with initial data using this command:
+`python manage.py loaddata fixtures.json`
+
 ## Testing
 Using **Docker**: `docker-compose up test`  
 Using **virtual environment**: `python -m pytest`
@@ -139,24 +142,24 @@ For searching, use `?search=<query>`.
 
 #### Get course details
 ```http request
-GET /api/v0/<course_id>
+GET /api/v0/courses/<course_id>
 ```
 
 #### Create new course
 ```http request
-POST /api/v0/
+POST /api/v0/courses/
 ```
 Requires `body` with serialized object.
 
 #### Change course details
 ```http request
-PUT /api/v0/<course_id>
+PUT /api/v0/courses/<course_id>
 ```
 Requires `body` with serialized object.
 
 #### Delete the course
 ```http request
-DELETE /api/v0/<course_id>
+DELETE /api/v0/courses/<course_id>
 ```
 
 ### Pure API
@@ -178,24 +181,24 @@ For filtering by date use this **URL parameter** syntax: `<date_name><lookup>=<y
 
 #### Get course details
 ```http request
-GET /api-pure/v0/<course_id>
+GET /api-pure/v0/courses/<course_id>
 ```
 
 #### Create new course
 ```http request
-POST /api-pure/v0/
+POST /api-pure/v0/courses/
 ```
 Requires `body` with serialized object.
 
 #### Change course details
 ```http request
-PUT /api-pure/v0/<course_id>
+PUT /api-pure/v0/courses/<course_id>
 ```
 Requires `body` with serialized object.
 
 #### Delete the course
 ```http request
-DELETE /api-pure/v0/<course_id>
+DELETE /api-pure/v0/courses/<course_id>
 ```
 
 ## Dependencies
