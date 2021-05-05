@@ -3,13 +3,14 @@
 
 A test task for Yalantis Python Summer School 2021. Made on Django and Django Rest Framework.
 
-Using Flake8, Travis CI and Docker.
+Using Flake8, Travis CI, Swagger UI and Docker.
 
 ## Table of contents
 * [Installation](#installation)
   * [Using Docker](#using-docker)
   * [Using Python Virtual Environment](#using-python-virtual-environment)
 * [Testing](#testing)
+* [Documentation](#documentation)
 * [How is it built](#how-is-it-built)
 * [API guide](#api-guide)
   * [DRF API](#drf-api)
@@ -62,6 +63,10 @@ Using **virtual environment**: `python -m pytest`
 Tests are also available via Postman:  
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/1bd1288f6c324c8c5678?action=collection%2Fimport)
 
+## Documentation
+
+**SwaggerUI DRF API** documentation is available by the [link](http://localhost:8000/swagger/): `/swagger`.
+
 ## How is it built
 I've implemented **two variants** of API:
 * First _(DRF API)_ - using Django Rest Framework
@@ -104,7 +109,7 @@ Required header: `Content-Type: application/json`
 Base URL is `api/v0/`
 #### Get list of courses (search and filters available)
 ```http request
-GET api/v0/courses/?page=<page_num>
+GET /api/v0/courses/?page=<page_num>
 ```
 where `<page_num>` is a number of the page  
 Response:
@@ -156,13 +161,16 @@ DELETE /api/v0/<course_id>
 
 ### Pure API
 
+**Base URL is `api-pure/v0/`**
+
+
 Here all is the same as with DRF API **except** filters date format and change course details method (POST vs PUT).
 
 > **Warning:** date format in Pure API filters is only `YYYY-mm-dd`
 
 #### Get list of courses (search and filters available)
 ```http request
-GET api/v0/courses/?page=<page_num>
+GET /api-pure/v0/courses/?page=<page_num>
 ```  
 
 **Filtering and searching:**  
@@ -170,24 +178,24 @@ For filtering by date use this **URL parameter** syntax: `<date_name><lookup>=<y
 
 #### Get course details
 ```http request
-GET /api/v0/<course_id>
+GET /api-pure/v0/<course_id>
 ```
 
 #### Create new course
 ```http request
-POST /api/v0/
+POST /api-pure/v0/
 ```
 Requires `body` with serialized object.
 
 #### Change course details
 ```http request
-PUT /api/v0/<course_id>
+PUT /api-pure/v0/<course_id>
 ```
 Requires `body` with serialized object.
 
 #### Delete the course
 ```http request
-DELETE /api/v0/<course_id>
+DELETE /api-pure/v0/<course_id>
 ```
 
 ## Dependencies
