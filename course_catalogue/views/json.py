@@ -28,7 +28,8 @@ class JsonResponseMixin:
 	Mixin for returning JSON response (with pagination, if possible)
 	"""
 	def render_to_response(self, context, **response_kwargs):
-		return JsonResponse(self.get_paginated_data(context), **response_kwargs, safe=False, encoder=DateDjangoJSONEncoder)
+		return JsonResponse(self.get_paginated_data(context), **response_kwargs,
+							safe=False, encoder=DateDjangoJSONEncoder)
 
 	def get_data(self, context):
 		return context
@@ -82,7 +83,8 @@ class JsonFormMixin(ModelFormMixin):
 	def form_valid(self, form):
 		self.object = form.save()
 		# Primitive and naive serialization (w/o writing own Serializer)
-		return JsonResponse(model_to_dict(self.object), safe=False, encoder=DateDjangoJSONEncoder)
+		return JsonResponse(model_to_dict(self.object),
+							safe=False, encoder=DateDjangoJSONEncoder)
 
 
 class JsonFormProcessor(JsonFormMixin, View):
@@ -92,7 +94,8 @@ class JsonFormProcessor(JsonFormMixin, View):
 	"""
 	def get(self, request, *args, **kwargs):
 		# Restrict for using GET method inherited from superclass
-		return JsonResponse({'detail': 'Method not allowed'}, status=405, encoder=DateDjangoJSONEncoder)
+		return JsonResponse({'detail': 'Method not allowed'},
+							status=405, encoder=DateDjangoJSONEncoder)
 
 	def post(self, request, *args, **kwargs):
 		form = self.get_form()
@@ -100,7 +103,8 @@ class JsonFormProcessor(JsonFormMixin, View):
 			return self.form_valid(form)
 		else:
 			# If we have some problems, return form errors
-			return JsonResponse(form.errors, status=400, encoder=DateDjangoJSONEncoder)
+			return JsonResponse(form.errors, status=400,
+								encoder=DateDjangoJSONEncoder)
 
 
 class JsonCreateView(BaseCreateView, JsonFormProcessor):
@@ -125,7 +129,8 @@ class JsonDeleteView(JsonFormProcessor):
 	def delete(self, request, *args, **kwargs):
 		self.object = self.get_object()
 		self.object.delete()
-		return JsonResponse({'detail': 'Object deleted'}, encoder=DateDjangoJSONEncoder)
+		return JsonResponse({'detail': 'Object deleted'},
+							encoder=DateDjangoJSONEncoder)
 
 
 class JsonModelView(JsonDetailView, JsonUpdateView, JsonDeleteView):
@@ -139,7 +144,8 @@ class JsonModelView(JsonDetailView, JsonUpdateView, JsonDeleteView):
 	"""
 
 
-class JsonListCreateView(FieldsFilter, SearchFilter, JsonListView, JsonCreateView):
+class JsonListCreateView(FieldsFilter, SearchFilter,
+						JsonListView, JsonCreateView):
 	"""
 	Uses FieldsFilter and SearchFilter.
 	Provides multiple list views for model:

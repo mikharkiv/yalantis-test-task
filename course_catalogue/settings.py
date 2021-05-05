@@ -119,6 +119,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': "%d.%m.%Y %H:%M",
     'DATE_FORMAT': "%d.%m.%Y",
+    'DATE_INPUT_FORMATS': ['%Y-%m-%d', '%d.%m.%Y'],
 }
 
 APPEND_SLASH = True

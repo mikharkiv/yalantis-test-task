@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from .serializers import CourseSerializer
 from .models import Course
-from course_catalogue.views.json import *
+from course_catalogue.views.json import JsonModelView, JsonListCreateView
 
 
 class CourseViewSet(viewsets.ModelViewSet):

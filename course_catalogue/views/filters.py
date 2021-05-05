@@ -28,10 +28,12 @@ class FieldsFilter(MultipleObjectMixin):
 
 	def get_queryset(self):
 		default_lookups = ['gte', 'lte', 'exact', 'gt', 'lt']
-		filter_names = [field + '__' + lookup for field in self.filter_fields for lookup in default_lookups]
+		filter_names = [field + '__' + lookup for field in self.filter_fields
+						for lookup in default_lookups]
 		# Appending for filtering EXACT without __exact lookup in request
 		filter_names.extend(self.filter_fields)
-		filters = {name: self.request.GET[name] for name in filter_names if self.request.GET.get(name, None)}
+		filters = {name: self.request.GET[name] for name in filter_names
+					if self.request.GET.get(name, None)}
 
 		try:
 			return super().get_queryset().filter(**filters)

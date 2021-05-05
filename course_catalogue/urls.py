@@ -29,5 +29,5 @@ api_urls = [
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v0/', include(api_urls)),
-    path('api/v0/pure/', include('courses.urls')),
+    path('api-pure/v0/', include('courses.urls')),
 ]

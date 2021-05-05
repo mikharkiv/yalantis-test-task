@@ -24,4 +24,3 @@ class Course(models.Model):
 				raise ValidationError('Start date should precede end date')
 		except TypeError:
 			raise ValidationError('Date must be an instance of datetime.date')
-
