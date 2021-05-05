@@ -1,15 +1,16 @@
 import datetime
 import json
 
-from django import views
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.views import View
+from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import BaseCreateView, ModelFormMixin, BaseUpdateView
+from django.views.generic.list import BaseListView
 
 from course_catalogue.settings import PURE_REST
-from course_catalogue.views.filters import SearchFilter, FieldsFilter
+from views.filters import SearchFilter, FieldsFilter
 
 
 class DateDjangoJSONEncoder(DjangoJSONEncoder):
@@ -43,24 +44,6 @@ class JsonResponseMixin:
 					'results': self.get_data(context)}
 		else:
 			return self.get_data(context)
-
-
-class JsonListView(JsonResponseMixin, views.generic.list.BaseListView):
-	"""
-	Default Django List View with JSON response
-	"""
-	paginate_by = PURE_REST['PAGE_SIZE']  # Default pages count
-
-	def get_data(self, context):
-		return list(context['object_list'].values().iterator())
-
-
-class JsonDetailView(JsonResponseMixin, views.generic.detail.BaseDetailView):
-	"""
-	Default Django Detail View with JSON response
-	"""
-	def get_data(self, context):
-		return model_to_dict(context['object'])
 
 
 class JsonFormMixin(ModelFormMixin):
@@ -105,6 +88,24 @@ class JsonFormProcessor(JsonFormMixin, View):
 			# If we have some problems, return form errors
 			return JsonResponse(form.errors, status=400,
 								encoder=DateDjangoJSONEncoder)
+
+
+class JsonListView(JsonResponseMixin, BaseListView):
+	"""
+	Default Django List View with JSON response
+	"""
+	paginate_by = PURE_REST['PAGE_SIZE']  # Default pages count
+
+	def get_data(self, context):
+		return list(context['object_list'].values().iterator())
+
+
+class JsonDetailView(JsonResponseMixin, BaseDetailView):
+	"""
+	Default Django Detail View with JSON response
+	"""
+	def get_data(self, context):
+		return model_to_dict(context['object'])
 
 
 class JsonCreateView(BaseCreateView, JsonFormProcessor):
